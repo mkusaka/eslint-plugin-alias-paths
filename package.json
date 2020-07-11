@@ -1,0 +1,25 @@
+{
+  "name": "eslint-plugin-alias-paths",
+  "version": "0.0.0",
+  "main": "dist/index.js",
+  "repository": "https://github.com/mkusaka/eslint-plugin-alias-paths.git",
+  "author": "mkusaka <hinoshita1992@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/eslint": "^7.2.0",
+    "@types/node": "^14.0.22",
+    "eslint": "^7.4.0",
+    "prettier": "^2.0.5",
+    "typescript": "^3.9.6"
+  },
+  "scripts": {
+    "prepare": "yarn build",
+    "build": "tsc -p .",
+    "watch": "tsc -p . --watch"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "src"
+  ]
+}
