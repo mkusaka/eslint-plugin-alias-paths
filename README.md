@@ -1,6 +1,6 @@
 # eslint-plugin-alias-paths
 
-eslint plugin for detect & autofix alias paht
+eslint plugin for detect & autofix alias path.
 # install
 
 ```
@@ -8,7 +8,7 @@ yarn add https://github.com/mkusaka/eslint-plugin-alias-paths.git
 ```
 
 # usage
-```.js
+```js
 module.exports = {
     env: {
         browser: true,
@@ -21,10 +21,10 @@ module.exports = {
         sourceType: "module",
     },
     plugins: [
-        "alias-paths
+        "alias-paths",
     ],
     rules: {
-        "alias-paths/prefer-alias-paths"
+        "alias-paths/prefer-alias-paths": "warn",
     },
 };
 ```
