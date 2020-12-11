@@ -1,57 +1,108 @@
-import { Rule } from "eslint";
-import path from "path";
+import { ESLintUtils } from "@typescript-eslint/experimental-utils";
+import { dirname, join, resolve } from "path";
 
-const preferAliasPaths: Rule.RuleModule = {
-  create: (context) => {
-    function escapeRegExp(string: string) {
-      return string.replace(/[.*+?^=!:${}()|[\]\/\\]/g, "\\$&");
-    }
-    const currentFilePath = context.getFilename();
-    const {
-      basePath,
-      target,
-      aliasedPath,
-    }: {
-      basePath: string;
-      target: string;
-      aliasedPath: string;
-    } = context.options[0];
-    const currentDirname = path.dirname(currentFilePath);
-    function absPath(importPath: string) {
-      if (importPath.match(new RegExp(`^${escapeRegExp(aliasedPath)}`))) {
-        return path.resolve(
-          basePath,
-          target,
-          importPath.replace(
-            new RegExp(
-              `^${escapeRegExp(
-                path
-                  .join(aliasedPath, "dummy")
-                  .replace(path.basename(path.join(aliasedPath, "dummy")), "")
-              )}`
-            ),
-            ""
-          )
-        );
-      }
-      return path.resolve(currentDirname, importPath);
-    }
+const createRule = ESLintUtils.RuleCreator((ruleName) => ruleName);
+
+type SchemaType = {
+  basePath: string;
+  targetPath: string;
+  aliasedPath: string;
+  depth: number;
+};
+
+const defaultOptions: SchemaType = {
+  basePath: "",
+  targetPath: "",
+  aliasedPath: "",
+  depth: 2,
+};
+
+const regexGen = (depth: number) => {
+  switch (depth) {
+    case 1:
+      return /^\.\.\//;
+    case 2:
+      return /^\.\.\/\.\.\//;
+    case 3:
+      return /^\.\.\/\.\.\/\.\.\//;
+    case 4:
+      return /^\.\.\/\.\.\/\.\.\/\.\.\//;
+    case 5:
+      return /^\.\.\/\.\.\/\.\.\/\.\.\/\.\.\//;
+    default:
+      throw Error("unsupported depth");
+  }
+};
+
+export const preferAliasPaths = createRule<[SchemaType], "message">({
+  name: "prefer-alias-paths",
+  meta: {
+    type: "suggestion",
+    fixable: "code",
+    docs: {
+      description: "prefer alias path instead of relative path.",
+      category: "Best Practices",
+      recommended: false,
+      requiresTypeChecking: true,
+    },
+    deprecated: false,
+    messages: {
+      message: "should use alias path as {{ path }}",
+    },
+    schema: [
+      {
+        type: "object",
+        properties: {
+          basePath: {
+            type: "string",
+          },
+          target: {
+            type: "string",
+          },
+          aliasedPath: {
+            type: "string",
+          },
+          depth: {
+            type: "number",
+          },
+        },
+      },
+    ],
+  },
+  defaultOptions: [defaultOptions],
+  create(context) {
     return {
       ImportDeclaration: (node) => {
-        // @ts-ignore
-        const importPath: string = node.source.value;
-        const absolutePath = absPath(importPath);
-        const expectedAliasedPath = absolutePath.replace(
-          path.resolve(basePath, target),
+        const importPath = node.source.value as string;
+        if (!/\.\.\//.exec(importPath)) {
+          return;
+        }
+        const {
+          basePath,
+          targetPath: target,
+          aliasedPath,
+          depth,
+        } = context.options[0];
+        const relativePrefixRegexp = regexGen(depth);
+        if (!relativePrefixRegexp.exec(importPath)) {
+          return;
+        }
+        const targetPath = join(basePath, target);
+        const fullFilePath = context.getFilename();
+        const dirPath = dirname(fullFilePath);
+        const expectedAliasedPath = resolve(dirPath, importPath).replace(
+          targetPath,
           aliasedPath
         );
         if (importPath !== expectedAliasedPath) {
           context.report({
-            message: `can be replaceable to ${expectedAliasedPath}`,
+            messageId: "message",
+            data: {
+              path: expectedAliasedPath,
+            },
             node,
             fix: (fixer) => {
               return fixer.replaceTextRange(
-                // @ts-ignore
                 node.source.range,
                 `"${expectedAliasedPath}"`
               );
@@ -61,6 +112,4 @@ const preferAliasPaths: Rule.RuleModule = {
       },
     };
   },
-};
-
-export { preferAliasPaths };
+});
