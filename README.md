@@ -24,7 +24,15 @@ module.exports = {
         "alias-paths",
     ],
     rules: {
-        "alias-paths/prefer-alias-paths": "warn",
+        "alias-paths/prefer-alias-paths": [
+            "warn"
+            {
+                basePath: resolve(__dirname), // base path for project
+                targetPath: "./", // base of alias path
+                aliasedPath: "@/", // path for aliased path
+                depth: 2, // target minimum relative path depth
+            }
+        ],
     },
 };
 ```
