@@ -4,7 +4,7 @@ eslint plugin for detect & autofix alias path.
 # install
 
 ```
-yarn add https://github.com/mkusaka/eslint-plugin-alias-paths.git
+yarn add -D eslint-plugin-alias-paths
 ```
 
 # usage
