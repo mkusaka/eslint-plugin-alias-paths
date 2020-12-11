@@ -47,7 +47,7 @@ export const preferAliasPaths = createRule<[SchemaType], "message">({
     },
     deprecated: false,
     messages: {
-      message: "{{ message }}",
+      message: "should use alias path as {{ path }}",
     },
     schema: [
       {
@@ -97,6 +97,9 @@ export const preferAliasPaths = createRule<[SchemaType], "message">({
         if (importPath !== expectedAliasedPath) {
           context.report({
             messageId: "message",
+            data: {
+              path: expectedAliasedPath,
+            },
             node,
             fix: (fixer) => {
               return fixer.replaceTextRange(
