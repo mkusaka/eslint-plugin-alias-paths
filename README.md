@@ -25,7 +25,7 @@ module.exports = {
     ],
     rules: {
         "alias-paths/prefer-alias-paths": [
-            "warn"
+            "warn",
             {
                 basePath: resolve(__dirname), // base path for project
                 targetPath: "./", // base of alias path
