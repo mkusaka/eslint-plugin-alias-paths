@@ -1,6 +1,6 @@
 {
   "name": "eslint-plugin-alias-paths",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "license": "MIT",
   "author": "mkusaka <hinoshita1992@gmail.com>",
   "repository": "https://github.com/mkusaka/eslint-plugin-alias-paths.git",
