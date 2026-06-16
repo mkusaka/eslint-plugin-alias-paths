@@ -26,6 +26,8 @@ depth.
 
 ## Installation
 
+Requires Node.js `>=24` and ESLint `>=10`.
+
 ```sh
 pnpm add -D eslint-plugin-alias-paths
 ```
@@ -44,24 +46,28 @@ Add the plugin and enable `alias-paths/prefer-alias-paths` in your ESLint
 configuration.
 
 ```js
-// .eslintrc.js
-const { resolve } = require("path");
+// eslint.config.js
+import { defineConfig } from "eslint/config";
+import aliasPaths from "eslint-plugin-alias-paths";
 
-module.exports = {
-  parser: "@typescript-eslint/parser",
-  plugins: ["alias-paths"],
-  rules: {
-    "alias-paths/prefer-alias-paths": [
-      "warn",
-      {
-        basePath: resolve(__dirname),
-        targetPath: "./src",
-        aliasedPath: "@/",
-        depth: 2,
-      },
-    ],
+export default defineConfig([
+  {
+    plugins: {
+      "alias-paths": aliasPaths,
+    },
+    rules: {
+      "alias-paths/prefer-alias-paths": [
+        "warn",
+        {
+          basePath: import.meta.dirname,
+          targetPath: "src",
+          aliasedPath: "@/",
+          depth: 2,
+        },
+      ],
+    },
   },
-};
+]);
 ```
 
 With the configuration above, imports that go up at least two directories are
@@ -79,8 +85,8 @@ import { Button } from "@/components/Button";
 
 ### `basePath`
 
-Absolute base path for the project. In most `.eslintrc.js` files this can be
-`resolve(__dirname)`.
+Absolute base path for the project. In most `eslint.config.js` files this can
+be `import.meta.dirname`.
 
 ### `targetPath`
 
@@ -95,15 +101,17 @@ Alias prefix used in import paths. For example, `"@/"`.
 
 Minimum relative import depth to report.
 
-Supported values are `1` through `5`.
+Supported values are positive integers.
+
+Examples:
 
 | `depth` | Reports imports starting with |
-| --- | --- |
-| `1` | `../` |
-| `2` | `../../` |
-| `3` | `../../../` |
-| `4` | `../../../../` |
-| `5` | `../../../../../` |
+| ------- | ----------------------------- |
+| `1`     | `../`                         |
+| `2`     | `../../`                      |
+| `3`     | `../../../`                   |
+| `4`     | `../../../../`                |
+| `5`     | `../../../../../`             |
 
 ## Scope
 

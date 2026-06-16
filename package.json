@@ -1,29 +1,49 @@
 {
   "name": "eslint-plugin-alias-paths",
   "version": "0.0.1",
-  "main": "dist/index.js",
-  "repository": "https://github.com/mkusaka/eslint-plugin-alias-paths.git",
-  "author": "mkusaka <hinoshita1992@gmail.com>",
   "license": "MIT",
-  "devDependencies": {
-    "@types/eslint": "^7.2.6",
-    "@types/node": "^14.14.12",
-    "eslint": "^7.15.0",
-    "prettier": "^2.2.1",
-    "typescript": "^4.1.2"
-  },
-  "scripts": {
-    "prepublishOnly": "pnpm run build",
-    "build": "tsc -p .",
-    "watch": "tsc -p . --watch"
-  },
+  "author": "mkusaka <hinoshita1992@gmail.com>",
+  "repository": "https://github.com/mkusaka/eslint-plugin-alias-paths.git",
   "files": [
     "dist",
-    "README.md",
-    "src"
+    "README.md"
   ],
-  "dependencies": {
-    "@typescript-eslint/experimental-utils": "^4.9.1"
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "prepublishOnly": "pnpm run check",
+    "build": "tsc -p .",
+    "typecheck": "tsc --noEmit",
+    "lint": "oxlint .",
+    "format": "oxfmt --write .",
+    "format:check": "oxfmt --check .",
+    "test": "vitest run",
+    "verify": "pnpm run typecheck && pnpm run lint && pnpm run format:check && pnpm run test",
+    "check": "pnpm run verify && pnpm run build",
+    "publish:dry": "pnpm publish --dry-run --no-git-checks",
+    "watch": "tsc -p . --watch"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.1",
+    "eslint": "^10.4.1",
+    "oxfmt": "^0.54.0",
+    "oxlint": "^1.69.0",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.8"
+  },
+  "peerDependencies": {
+    "eslint": ">=10.0.0"
+  },
+  "engines": {
+    "node": ">=24"
   },
   "packageManager": "pnpm@11.5.2"
 }
