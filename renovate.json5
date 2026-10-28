@@ -1,0 +1,43 @@
+{
+  automerge: true,
+  platformAutomerge: false,
+  minimumReleaseAge: "7 days",
+  $schema: "https://docs.renovatebot.com/renovate-schema.json",
+  extends: ["config:best-practices", "customManagers:githubActionsVersions"],
+  packageRules: [
+    {
+      matchDepTypes: ["dependencies"],
+      matchUpdateTypes: ["minor", "patch"],
+      groupName: "dependencies (non-major)",
+      automerge: true,
+      automergeType: "pr",
+    },
+    {
+      matchDepTypes: ["devDependencies"],
+      matchUpdateTypes: ["minor", "patch"],
+      groupName: "devDependencies (non-major)",
+      automerge: true,
+      automergeType: "pr",
+    },
+    {
+      matchManagers: ["github-actions"],
+      matchUpdateTypes: ["minor", "patch"],
+      groupName: "github-actions non-major updates",
+      automerge: true,
+      automergeType: "pr",
+    },
+    {
+      matchManagers: ["custom.regex"],
+      matchUpdateTypes: ["minor", "patch"],
+      groupName: "workflow tool versions",
+      automerge: true,
+      automergeType: "pr",
+    },
+    {
+      description: "Keep npm release age in sync with pnpm minimumReleaseAge (security:minimumReleaseAgeNpm sets 3 days)",
+      matchDatasources: ["npm"],
+      matchUpdateTypes: ["major", "minor", "patch"],
+      minimumReleaseAge: "7 days",
+    },
+  ],
+}
